@@ -1,0 +1,149 @@
+buildscript {
+    ext {
+        springBootVersion = '2.7.18'
+    }
+    repositories {
+        maven { url "http://maven.weoa.com/nexus/content/groups/public/"; }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'com.github.sherter.googlejavaformatgradleplugin:google-java-format-gradle-plugin:0.9-SNAPSHOT'
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.github.sherter.google-java-format'
+
+group = 'com.webank'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    //mavenCentral()
+    maven {
+        url "http://maven.weoa.com/nexus/content/groups/public/"
+    }
+    //maven { url "https://maven.aliyun.com/repository/public" }
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework:spring-web:5.3.34'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+    implementation('cn.hutool:hutool-all:5.8.27')
+    implementation('org.yaml:snakeyaml:2.0')
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // mysql
+    implementation 'com.mysql:mysql-connector-j:8.0.31'
+    implementation('com.alibaba:druid:1.2.14')
+
+}
+
+
+bootJar {
+    destinationDir file('dist')
+    archiveName project.name +'_4392' + '.jar'
+    from('src/main/java'){
+        include '**/*.xml'
+    }
+    exclude '**/*.properties'
+    exclude '**/*.yml'
+    exclude '**/*.xml'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+clean {
+    delete file('dist')
+}
+
+task aomp {
+    doLast {
+        copy {
+            from file('src/main/resources/aomp/start.sh')
+            from file('src/main/resources/aomp/stop.sh')
+            into 'dist'
+        }
+        copy {
+            from file('src/main/resources/aomp/logback-spring.xml')
+            from file('src/main/resources/aomp/application.yml')
+            into 'dist/config'
+        }
+    }
+}
+
+task sit {
+    doLast {
+        copy {
+            from file('src/main/resources/sit/start.sh')
+            from file('src/main/resources/sit/stop.sh')
+            into 'dist'
+        }
+        copy {
+            from file('src/main/resources/sit/logback-spring.xml')
+            from file('src/main/resources/sit/application.yml')
+            into 'dist/config'
+        }
+    }
+}
+
+task dev {
+    doLast {
+        copy {
+            from file('config')
+            into 'dist/config/'
+        }
+        copy {
+            from file('src/main/resources/' )
+            include('**/*.yml')
+            into 'dist/config/'
+        }
+        copy {
+            from file('src/main/resources/')
+            include('**/*.sh')
+            into 'dist/'
+        }
+    }
+}
+
+
+tasks.withType(Copy) {
+    filesMatching("**/*.sql") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+    filesMatching("**/*.yml") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+    filesMatching("**/*.sh") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
+googleJavaFormat {
+    toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+}
