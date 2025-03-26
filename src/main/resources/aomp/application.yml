@@ -1,0 +1,51 @@
+server:
+  port: 43921
+
+spring:
+  mvc:
+    async:
+      request-timeout: 500
+  datasource:
+    url: jdbc:mysql://[@4392-TDSQL_VIP]:[@4392-TDSQL_PORT]/dawkeystore?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    username: [*user_WSDAWKEYSTORE]
+    password: [*pass_WSDAWKEYSTORE]
+    driverClassName: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    defaultAutoCommit: false
+    initialSize: 25
+    maxActive: 128
+    maxIdle: 50
+    minIdle: 25
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    timeBetweenEvictionRunsMillis: 34000
+    minEvictableIdleTimeMillis: 34000
+    removeAbandoned: false
+    logAbandoned: true
+    removeAbandonedTimeout: 54
+    maxWait: 10000
+    poolPreparedStatements: false
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+mybatis:
+  typeAliasesPackage: com.webank.beanbag.keystore.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+servlet:
+  context-path: /api
+
+logging:
+  config: config/logback-spring.xml
+
+system:
+  encrypt-private-key: [*key_dawEncryptPrivateKey]
+  version: 1.0.0
+
+app:
+  privateStr: [*key_dawKeystoreAppPriKey]
+  publicStr: "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA0btzsPQAK6Ixddk6mNZ+ErDRtIe/9k8rhycp9YjhH6yWACmVIACk5EbxPKPRmVaVwMYjIw5e19t4TRAg9L0+YCAev7YSHReLUIV/7cYd35hXL7bpy8uT4zY2FYfNjjR1BcQlQUzTict+pq8OeeD80u9X0bhrEis8OdLJKmytD7Ehn0BV1iIA9LCsyqFU4bL+xB98blagx7ruuZXMbFelaal4F19U1A4xTniH/IFA3rb9/whXQc7Gy9yM9zs/DtohQGCM+snj2lscIRhauUzw6GQB+3WFLcByjlvvUKUHRxOLFtTHTpjzmG+NMQpXMbkoM7Y0s71CIY9/mHjCtdaJ9+a1rgx7X2Rs6YEj5zJ3vxGwxhkfDDWxXSLTcNt/yQqLFDeQTIgM8fx/pdWLk1sI4uRnzTauNXVjkyXHIpYFyXUggGVVmjZosm+jtg5EsbmHIc5QnPX7IC3ZWsw68yAo4t5Hp2J3QKxa3OgpcRqjXsq0Dj/FPLWh1huWKS5UD3NtRO8zB8UJP+OIGG1yQMTkHLD0ihCsLXvJgVZyspMLSk/rDbnxUBPbARR1mN9vcfh8iEePnZKwiMIAshsTFKxEvFOfHH2J0zspbeilCK7re9FSYatnrQFkOodWXd9gcUb36yQ0u5MNNiQa7iwlgaG9X5oPHnk57d+biH8esTK4bP0CAwEAAQ=="
+
+
